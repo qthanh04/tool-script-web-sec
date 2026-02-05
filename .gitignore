@@ -15,9 +15,9 @@ labs/*.lab
 *.log
 *.stdout
 
-# Keep important files
+# Keep only essential files
 !README.md
-!TECHNICAL_GUIDE.md  
-!PACKAGE_SUMMARY.md
 !universal_lab_converter.sh
+!setup.sh
+!download_labs.sh
 !scripts/*.sh
