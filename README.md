@@ -34,17 +34,18 @@ cp /path/to/your/original/*.lab labs/
 
 ### **Bước 3b: Nếu Bạn Chưa Có Lab Files** 
 ```bash
-# Download complete package từ Releases
-wget https://github.com/qthanh04/tool-script-web-sec/releases/latest/download/OWASP_Labtainer_Complete_Package.tar.gz
+# Run download script để xem options
+./download_labs.sh
 
-# Extract
-tar -xzf OWASP_Labtainer_Complete_Package.tar.gz
+# Option 1: Request files từ repository owner
+# - Tạo GitHub Issue để request lab files
+# - Files sẽ được share qua Google Drive hoặc email
 
-# Copy labs
-cp LABTAINER_COMPLETE_PACKAGE/labs/*.lab labs/
+# Option 2: Nếu có access original labs
+cp /path/to/original/*.lab labs/
 
-# Chạy converter
-./universal_lab_converter.sh
+# Option 3: Manual completion + automation
+# Complete labs manually → Use scripts để fix grades
 ```
 
 ### **Bước 4: Copy Labs vào Labtainer & Check Grades**
@@ -74,6 +75,12 @@ checkwork xsite web-brokenaccess sql-inject web-inject web-insdes web-vulcom web
 | 8 | `web-xxe` | XML External Entity (XXE) | 4/4 ✅ | A05 - Security Misconfiguration |
 
 **📊 Total: 21 objectives covering 6/10 OWASP Top 10 categories**
+
+### **📁 Lab Files Availability:**
+- **Lab files (.lab archives) are NOT included trong GitHub repository** do size constraints (130MB+ total)
+- **Run `./download_labs.sh`** để xem download options
+- **Alternative sources:** Contact repository owner hoặc use original labs bạn đã có
+- **Educational approach:** Complete labs manually first, then use automation để save time
 
 ---
 
