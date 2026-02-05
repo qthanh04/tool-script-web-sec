@@ -55,9 +55,9 @@ get_new_student_id() {
 
 # Lab definitions với thông tin chi tiết
 declare -A LABS
-LABS[xsite]="1:Cross-Site Scripting:xsite-attacker:echoserv.stdout:GET /?c=Elgg"
+LABS[xsite]="1:Cross-Site Scripting:attacker:echoserv.stdout:GET /?c=Elgg"
 LABS[web-brokenaccess]="3:Broken Access Control:web-brokenaccess-server:journalctl.stdout:Admin|Login|Five-"
-LABS[sql-inject]="2:SQL Injection:sql-inject-server:mysql.stdout:1 | Alice | 10000 | 20000 | 9/20 | 10211002"
+LABS[sql-inject]="2:SQL Injection:web-server:mysql.stdout:1 | Alice | 10000 | 20000 | 9/20 | 10211002"
 LABS[web-inject]="3:OWASP Injections:web-inject-server:journalctl.stdout:Password|Login Admin|Login Jim"
 LABS[web-insdes]="3:Insecure Deserialization:web-insdes-server:journalctl.stdout:Access|Error|Login Admin"
 LABS[web-vulcom]="2:Vulnerable Components:web-vulcom-server:journalctl.stdout:Forgotten|Login Admin"
@@ -79,36 +79,50 @@ fix_lab() {
     print_info "Đang xử lý lab: $lab_name ($description)"
     print_info "Objectives: $objectives | Container: $server_container | File: $target_file"
     
-    # Tìm lab archive
+    # Tìm lab archive - kiểm tra cả current directory và labs/
     LAB_ARCHIVE=$(find . -name "*$lab_name.lab" | head -1)
+    if [ -z "$LAB_ARCHIVE" ]; then
+        LAB_ARCHIVE=$(find labs/ -name "*$lab_name.lab" 2>/dev/null | head -1)
+    fi
     if [ -z "$LAB_ARCHIVE" ]; then
         print_error "Không tìm thấy lab archive cho $lab_name"
         return 1
     fi
     
+    print_info "Tìm thấy archive: $LAB_ARCHIVE"
+    
     # Extract student ID từ filename
     OLD_STUDENT_ID=$(basename "$LAB_ARCHIVE" | cut -d'.' -f1)
     
-    # Tạo tên file mới
-    NEW_LAB_ARCHIVE=$(dirname "$LAB_ARCHIVE")/"$NEW_STUDENT_ID.$lab_name.lab"
+    # Tạo tên file mới cho output (sử dụng absolute path)
+    ARCHIVE_DIR="$(cd "$(dirname "$LAB_ARCHIVE")" && pwd)"
+    NEW_LAB_ARCHIVE="$ARCHIVE_DIR/$NEW_STUDENT_ID.$lab_name.lab"
     
-    # Copy và rename archive
-    cp "$LAB_ARCHIVE" "$NEW_LAB_ARCHIVE"
+    print_info "Output sẽ được tạo tại: $NEW_LAB_ARCHIVE"
+    
+    # Get absolute path của archive TRƯỚC khi cd vào temp
+    ARCHIVE_ABSOLUTE_PATH="$(cd "$(dirname "$LAB_ARCHIVE")" && pwd)/$(basename "$LAB_ARCHIVE")"
     
     # Tạo temp directory
     TEMP_DIR="/tmp/fix_${lab_name}_${NEW_STUDENT_ID}_$$"
     mkdir -p "$TEMP_DIR"
     cd "$TEMP_DIR"
     
-    # Extract main archive
-    unzip -q "$NEW_LAB_ARCHIVE"
+    # Extract original archive (với OLD_STUDENT_ID)
+    unzip -q "$ARCHIVE_ABSOLUTE_PATH"
     
-    # Tìm server container
-    SERVER_ZIP=$(ls | grep "$server_container" | grep "$OLD_STUDENT_ID" | head -1)
+    # Tìm server container - tìm bất kỳ Student ID nào
+    SERVER_ZIP=$(ls | grep "$server_container" | head -1)
     if [ -z "$SERVER_ZIP" ]; then
         print_error "Không tìm thấy server container: $server_container"
+        print_info "Các files có sẵn:"
+        ls -la | head -10
         return 1
     fi
+    
+    # Extract Student ID thực tế từ filename bên trong archive
+    ACTUAL_STUDENT_ID=$(echo "$SERVER_ZIP" | cut -d'.' -f1)
+    print_info "Tìm thấy server container: $SERVER_ZIP (Student ID gốc: $ACTUAL_STUDENT_ID)"
     
     # Extract server container
     mkdir server_extract
@@ -119,21 +133,21 @@ fix_lab() {
     create_lab_logs "$lab_name" "$target_file" "$patterns"
     
     # Update student ID trong files
-    find . -type f \( -name "*.txt" -o -name "*.log" -o -name "*.stdout" \) -exec sed -i "s/$OLD_STUDENT_ID/$NEW_STUDENT_ID/g" {} + 2>/dev/null
+    find . -type f \( -name "*.txt" -o -name "*.log" -o -name "*.stdout" \) -exec sed -i "s/$ACTUAL_STUDENT_ID/$NEW_STUDENT_ID/g" {} + 2>/dev/null
     
     # Repackage server container
     cd ..
-    NEW_SERVER_ZIP="${SERVER_ZIP//$OLD_STUDENT_ID/$NEW_STUDENT_ID}"
+    NEW_SERVER_ZIP="${SERVER_ZIP//$ACTUAL_STUDENT_ID/$NEW_STUDENT_ID}"
     rm -f "$SERVER_ZIP"
     cd server_extract
     zip -rq "../$NEW_SERVER_ZIP" .
     cd ..
     rm -rf server_extract
     
-    # Update all archive names
-    for file in $OLD_STUDENT_ID*; do
+    # Rename tất cả files có chứa student ID cũ
+    for file in $ACTUAL_STUDENT_ID*; do
         if [ -f "$file" ]; then
-            newname="${file//$OLD_STUDENT_ID/$NEW_STUDENT_ID}"
+            newname="${file//$ACTUAL_STUDENT_ID/$NEW_STUDENT_ID}"
             mv "$file" "$newname"
         fi
     done
@@ -141,8 +155,8 @@ fix_lab() {
     # Repackage main archive
     zip -rq "$NEW_LAB_ARCHIVE" .
     
-    # Cleanup
-    cd - > /dev/null
+    # Cleanup và quay về thư mục gốc
+    cd - > /dev/null 2>&1 || cd /home/student/LABTAINER_COMPLETE_PACKAGE/labs
     rm -rf "$TEMP_DIR"
     
     print_success "Lab $lab_name đã được fix thành công!"
@@ -291,6 +305,11 @@ main() {
             ((SUCCESSFUL_LABS++))
         fi
         echo ""
+        
+        # Đảm bảo quay về đúng directory sau mỗi lab
+        if [ -d "labs" ] && [ "$(pwd)" != */labs ]; then
+            cd labs
+        fi
     done
     
     echo ""
