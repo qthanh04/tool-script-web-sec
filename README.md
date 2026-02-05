@@ -44,15 +44,14 @@ cp /path/to/your/original/*.lab labs/
 
 ### **Bước 3c: Manual Download Options** 
 ```bash
-# Run download script để xem options
+# Option 1: Direct download từ GitHub Releases
+wget https://github.com/qthanh04/tool-script-web-sec/releases/download/v1.0/owasp-labtainer-labs-template-v1.0.tar.gz
+
+# Extract lab files
+tar -xzf owasp-labtainer-labs-template-v1.0.tar.gz
+
+# Option 2: Auto-download script
 ./download_labs.sh
-
-# Option 1: Request files từ repository owner
-# - Tạo GitHub Issue để request lab files
-# - Files sẽ được share qua Google Drive hoặc email
-
-# Option 2: Nếu có access original labs
-cp /path/to/original/*.lab labs/
 
 # Option 3: Manual completion + automation
 # Complete labs manually → Use scripts để fix grades

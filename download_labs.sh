@@ -38,31 +38,24 @@ print_info() {
 
 # Auto download from GitHub releases
 auto_download_from_github() {
-    print_info "Checking GitHub releases for lab files..."
+    print_info "Attempting auto-download from GitHub Releases..."
     
-    # Check if gh CLI is available
-    if command -v gh &> /dev/null; then
-        print_info "GitHub CLI detected, attempting auto-download..."
-        
-        # Get latest release download URL
-        RELEASE_URL=$(gh release view --repo qthanh04/tool-script-web-sec --json assets --jq '.assets[0].url' 2>/dev/null)
-        
-        if [ ! -z "$RELEASE_URL" ] && [ "$RELEASE_URL" != "null" ]; then
-            print_info "Found release, downloading..."
-            gh release download --repo qthanh04/tool-script-web-sec --pattern "*.tar.gz" --dir ./
-            
-            # Extract if download successful
-            if [ -f *.tar.gz ]; then
-                print_info "Extracting lab files..."
-                tar -xzf *.tar.gz
-                rm *.tar.gz
-                print_success "Lab files downloaded and extracted successfully!"
-                return 0
-            fi
-        fi
+    # Direct download URL
+    RELEASE_URL="https://github.com/qthanh04/tool-script-web-sec/releases/download/v1.0/owasp-labtainer-labs-template-v1.0.tar.gz"
+    
+    print_info "Downloading from: $RELEASE_URL"
+    
+    if wget -q "$RELEASE_URL" -O owasp-labtainer-labs-template-v1.0.tar.gz; then
+        print_info "Extracting lab files..."
+        tar -xzf owasp-labtainer-labs-template-v1.0.tar.gz
+        rm owasp-labtainer-labs-template-v1.0.tar.gz
+        print_success "Lab files downloaded and extracted successfully!"
+        return 0
+    else
+        print_error "Download failed from releases"
     fi
     
-    print_warning "Auto-download không available hoặc không tìm thấy releases"
+    print_warning "Auto-download failed"
     print_info "Please follow manual download options below"
     return 1
 }
@@ -94,9 +87,9 @@ show_download_options() {
     echo ""
     
     echo -e "${GREEN}Option 1: Download from GitHub Releases${NC}"
-    echo "   - Check repository releases: https://github.com/qthanh04/tool-script-web-sec/releases"
-    echo "   - Download latest owasp-labs-*.tar.gz file"
-    echo "   - Extract: tar -xzf owasp-labs-*.tar.gz"
+    echo "   - Direct download: https://github.com/qthanh04/tool-script-web-sec/releases/download/v1.0/owasp-labtainer-labs-template-v1.0.tar.gz"
+    echo "   - Or browse releases: https://github.com/qthanh04/tool-script-web-sec/releases"
+    echo "   - Extract: tar -xzf owasp-labtainer-labs-template-v1.0.tar.gz"
     echo ""
     
     echo -e "${GREEN}Option 2: Contact Repository Owner${NC}"
