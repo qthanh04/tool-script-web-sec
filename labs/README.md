@@ -1,52 +1,54 @@
-# 📂 Labs Directory
+# 📁 Lab Files Directory
 
-Thư mục này chứa 8 lab files OWASP Security đã được fix và ready để sử dụng.
+Lab files sẽ được đặt ở đây sau khi download từ GitHub Releases.
 
-## 📁 **Structure**
-```
-labs/
-├── S22BA13203.xsite.lab              # Cross-Site Scripting (Basic) - 18.8MB
-├── S22BA13203.web-brokenaccess.lab   # Broken Access Control - 684KB  
-├── S22BA13203.sql-inject.lab         # SQL Injection - 38.7MB
-├── S22BA13203.web-inject.lab         # OWASP Injections - 475KB
-├── S22BA13203.web-insdes.lab         # Insecure Deserialization - 506KB
-├── S22BA13203.web-vulcom.lab         # Vulnerable Components - 491KB
-├── S22BA13203.web-xss.lab            # Cross-Site Scripting (Advanced) - 72.1MB
-└── S22BA13203.web-xxe.lab            # XML External Entity - 351KB
-```
+## Template Lab Files (1 bộ mẫu):
+- S22BA13203.xsite.lab (18.8MB) - Cross-Site Scripting Basic
+- S22BA13203.web-brokenaccess.lab (684KB) - Broken Access Control  
+- S22BA13203.sql-inject.lab (38.7MB) - SQL Injection
+- S22BA13203.web-inject.lab (475KB) - Web Application Injections
+- S22BA13203.web-insdes.lab (506KB) - Insecure Deserialization
+- S22BA13203.web-vulcom.lab (491KB) - Vulnerable Components
+- S22BA13203.web-xss.lab (72.1MB) - Cross-Site Scripting Advanced
+- S22BA13203.web-xxe.lab (351KB) - XML External Entity (XXE)
+
+**Total: ~127MB template set**
+
+## How Universal Converter Works:
+1. Download template labs (S22BA13203) từ GitHub Releases
+2. Universal converter sẽ convert Student ID từ S22BA13203 → Student ID của bạn
+3. Tất cả grading patterns và objectives sẽ được preserved
+4. Kết quả: 8 labs với Student ID mới, pass 21/21 objectives
 
 ## 🚀 **Cách Lấy Lab Files**
 
-### **Option 1: Download Release Package (Recommended)**
+### **Option 1: Auto-Download (Recommended)**
 ```bash
-# Download từ GitHub Releases
-wget https://github.com/qthanh04/tool-script-web-sec/releases/download/v1.0/OWASP_Labtainer_Complete_Package_v1.0.tar.gz
+# Chạy download script
+./download_labs.sh
 
-# Extract
-tar -xzf OWASP_Labtainer_Complete_Package_v1.0.tar.gz
-
-# Labs sẽ có sẵn trong LABTAINER_COMPLETE_PACKAGE/labs/
+# Script sẽ tự động tìm và download từ GitHub Releases
 ```
 
-### **Option 2: Use Individual Scripts**
-Nếu bạn có original lab files với Student ID khác, sử dụng individual scripts:
+### **Option 2: Manual Download từ Releases**
 ```bash
-./scripts/fix_xsite.sh
-./scripts/fix_sql_inject.sh
-# ... etc
+# Download từ GitHub Releases  
+wget https://github.com/qthanh04/tool-script-web-sec/releases/download/v1.0/owasp-labtainer-labs-template-v1.0.tar.gz
+
+# Extract vào thư mục labs
+tar -xzf owasp-labtainer-labs-template-v1.0.tar.gz
 ```
 
-### **Option 3: Use Universal Converter**  
+### **Option 3: Use Universal Converter với Original Labs**  
+Nếu bạn đã có original lab files:
 ```bash
+# Copy original labs vào thư mục này
+cp /path/to/your/original/*.lab labs/
+
+# Run universal converter
 ./universal_lab_converter.sh
 # Nhập Student ID mới khi được hỏi
 ```
-
-## ⚠️ **Important Notes**
-
-1. **Lab files được exclude khỏi GitHub** do size lớn (300MB+ total)
-2. **Download complete package** từ Releases để có đầy đủ files
-3. **Hoặc sử dụng scripts** để tạo từ original labs của bạn
 
 ## 🎯 **Quick Start**
 

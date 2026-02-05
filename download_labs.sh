@@ -36,7 +36,37 @@ print_info() {
     echo -e "${BLUE}→${NC} $1"
 }
 
-# Check if labs directory has files
+# Auto download from GitHub releases
+auto_download_from_github() {
+    print_info "Checking GitHub releases for lab files..."
+    
+    # Check if gh CLI is available
+    if command -v gh &> /dev/null; then
+        print_info "GitHub CLI detected, attempting auto-download..."
+        
+        # Get latest release download URL
+        RELEASE_URL=$(gh release view --repo qthanh04/tool-script-web-sec --json assets --jq '.assets[0].url' 2>/dev/null)
+        
+        if [ ! -z "$RELEASE_URL" ] && [ "$RELEASE_URL" != "null" ]; then
+            print_info "Found release, downloading..."
+            gh release download --repo qthanh04/tool-script-web-sec --pattern "*.tar.gz" --dir ./
+            
+            # Extract if download successful
+            if [ -f *.tar.gz ]; then
+                print_info "Extracting lab files..."
+                tar -xzf *.tar.gz
+                rm *.tar.gz
+                print_success "Lab files downloaded and extracted successfully!"
+                return 0
+            fi
+        fi
+    fi
+    
+    print_warning "Auto-download không available hoặc không tìm thấy releases"
+    print_info "Please follow manual download options below"
+    return 1
+}
+
 check_labs_status() {
     if [ ! -d "labs" ]; then
         mkdir -p labs
@@ -63,10 +93,16 @@ show_download_options() {
     echo -e "${YELLOW}📥 CÁC CÁCH DOWNLOAD LAB FILES${NC}"
     echo ""
     
-    echo -e "${GREEN}Option 1: Contact Repository Owner${NC}"
-    echo "   - Email hoặc tạo GitHub Issue để request lab files"
+    echo -e "${GREEN}Option 1: Download from GitHub Releases${NC}"
+    echo "   - Check repository releases: https://github.com/qthanh04/tool-script-web-sec/releases"
+    echo "   - Download latest owasp-labs-*.tar.gz file"
+    echo "   - Extract: tar -xzf owasp-labs-*.tar.gz"
+    echo ""
+    
+    echo -e "${GREEN}Option 2: Contact Repository Owner${NC}"
+    echo "   - Create GitHub Issue để request lab files nếu releases không available"
     echo "   - Repository: https://github.com/qthanh04/tool-script-web-sec"
-    echo "   - Files sẽ được share qua Google Drive hoặc alternative hosting"
+    echo "   - Files có thể được share qua Google Drive hoặc alternative hosting"
     echo ""
     
     echo -e "${GREEN}Option 2: Use Your Original Labs${NC}"
@@ -131,6 +167,14 @@ main() {
     
     print_warning "Lab files chưa có sẵn trong thư mục labs/"
     echo ""
+    
+    # Try auto-download first
+    if auto_download_from_github; then
+        print_success "Auto-download thành công!"
+        if check_labs_status; then
+            exit 0
+        fi
+    fi
     
     show_download_options
     

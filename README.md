@@ -22,7 +22,17 @@ cd tool-script-web-sec
 ```
 Script sẽ kiểm tra môi trường và hướng dẫn next steps.
 
-### **Bước 3a: Nếu Bạn Đã Có Original Lab Files**
+### **Bước 3a: Auto-Download Lab Files (Easiest)**
+```bash
+# Try auto-download from GitHub releases
+./download_labs.sh
+
+# If successful, proceed to converter
+./universal_lab_converter.sh
+# Nhập Student ID mới (ví dụ: S22BA13456)
+```
+
+### **Bước 3b: Nếu Bạn Đã Có Original Lab Files**
 ```bash
 # Copy lab files vào thư mục labs/
 cp /path/to/your/original/*.lab labs/
@@ -32,7 +42,7 @@ cp /path/to/your/original/*.lab labs/
 # Nhập Student ID mới (ví dụ: S22BA13456)
 ```
 
-### **Bước 3b: Nếu Bạn Chưa Có Lab Files** 
+### **Bước 3c: Manual Download Options** 
 ```bash
 # Run download script để xem options
 ./download_labs.sh
@@ -77,9 +87,10 @@ checkwork xsite web-brokenaccess sql-inject web-inject web-insdes web-vulcom web
 **📊 Total: 21 objectives covering 6/10 OWASP Top 10 categories**
 
 ### **📁 Lab Files Availability:**
-- **Lab files (.lab archives) are NOT included trong GitHub repository** do size constraints (130MB+ total)
-- **Run `./download_labs.sh`** để xem download options
-- **Alternative sources:** Contact repository owner hoặc use original labs bạn đã có
+- **Lab files (.lab archives) are NOT included trong GitHub repository** do size constraints (127MB+ total)
+- **Template set:** Chỉ 1 bộ mẫu S22BA13203 (8 labs) instead of duplicates
+- **Run `./download_labs.sh`** để auto-download template từ GitHub Releases
+- **Universal converter** sẽ convert từ template → Student ID của bạn
 - **Educational approach:** Complete labs manually first, then use automation để save time
 
 ---
@@ -298,7 +309,7 @@ Report issues tại [GitHub Issues](https://github.com/qthanh04/tool-script-web-
 - **Objectives Coverage:** 21/21 (100%)  
 - **Average Success Rate:** 95%+ across different environments
 - **Processing Speed:** 2-3 minutes for complete conversion
-- **File Size:** 130MB total for all labs
+- **File Size:** 127MB template set (optimized từ 412MB)
 - **Student ID Formats:** 50+ tested patterns
 
 ### **🎯 Performance Benchmarks:**

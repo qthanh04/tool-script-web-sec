@@ -1,6 +1,9 @@
 # Ignore large lab files for GitHub (use releases for distribution)
 labs/*.lab
 
+# Ignore release packages (upload manually to GitHub Releases)
+*.tar.gz
+
 # Ignore temporary files
 *.tmp
 *.bak
