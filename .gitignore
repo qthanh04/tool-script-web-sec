@@ -1,0 +1,20 @@
+# Ignore large lab files for GitHub (use releases for distribution)
+labs/*.lab
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.backup
+/tmp/
+.DS_Store
+
+# Ignore logs
+*.log
+*.stdout
+
+# Keep important files
+!README.md
+!TECHNICAL_GUIDE.md  
+!PACKAGE_SUMMARY.md
+!universal_lab_converter.sh
+!scripts/*.sh
