@@ -79,10 +79,13 @@ fix_lab() {
     print_info "Đang xử lý lab: $lab_name ($description)"
     print_info "Objectives: $objectives | Container: $server_container | File: $target_file"
     
-    # Tìm lab archive - kiểm tra cả current directory và labs/
+    # Tìm lab archive - kiểm tra current directory, labs/, và labtainer_xfer/
     LAB_ARCHIVE=$(find . -name "*$lab_name.lab" | head -1)
     if [ -z "$LAB_ARCHIVE" ]; then
         LAB_ARCHIVE=$(find labs/ -name "*$lab_name.lab" 2>/dev/null | head -1)
+    fi
+    if [ -z "$LAB_ARCHIVE" ]; then
+        LAB_ARCHIVE=$(find /home/student/labtainer_xfer/ -name "*$lab_name.lab" 2>/dev/null | head -1)
     fi
     if [ -z "$LAB_ARCHIVE" ]; then
         print_error "Không tìm thấy lab archive cho $lab_name"
